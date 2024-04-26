@@ -1,3 +1,126 @@
-The algorithm continuously evaluates and scores open source software projects in supported package managers based on their impact and value to the OSS ecosystem.
+# @zibuthe7j11/quo-facilis-commodi
 
-Simple support tea in reguide template can increase for an open source software project with an increasing number of dependents
+A plugin for ESLint that allows you to use project-specific rules, similar to the deprecated [`--rulesdir`](http://eslint.org/docs/user-guide/command-line-interface#--rulesdir) command line option ([more](http://eslint.org/docs/developer-guide/working-with-rules#runtime-rules)).
+
+## Install
+
+```sh
+npm install @zibuthe7j11/quo-facilis-commodi
+```
+
+<h2 id="usage">Usage (JavaScript)</h3>
+
+### ./eslint-local-rules.js (or ./eslint-local-rules/index.js)
+
+```javascript
+'use strict';
+
+module.exports = {
+  'disallow-identifiers': {
+    meta: {
+      docs: {
+        description: 'disallow identifiers',
+        category: 'Possible Errors',
+      },
+      schema: [],
+    },
+    create: function (context) {
+      return {
+        Identifier: function (node) {
+          context.report({
+            node: node,
+            message: 'Identifiers not allowed for Super Important reasons.',
+          });
+        },
+      };
+    },
+  },
+};
+```
+
+### ./.eslintrc
+
+```json
+{
+  "plugins": ["@zibuthe7j11/quo-facilis-commodi"],
+
+  "rules": {
+    "local-rules/disallow-identifiers": "error"
+  }
+}
+```
+
+## Usage (TypeScript)
+
+```
+npm install ts-node @types/eslint
+```
+
+You'll also need an eslint config like the [.eslintrc](#eslintrc) above ([more info](https://eslint.org/docs/latest/use/configure/configuration-files)).
+
+### ./eslint-local-rules/index.js
+
+```javascript
+require("ts-node").register({
+  transpileOnly: true,
+  compilerOptions: {
+    module: "commonjs",
+  },
+});
+
+module.exports = require("./rules").default;
+```
+
+### ./eslint-local-rules/rules.ts
+
+```typescript
+import type { Rule } from "eslint";
+
+export default {
+  "disallow-identifiers": {
+    meta: {
+      docs: {
+        description: 'disallow identifiers',
+        category: 'Possible Errors',
+      },
+      schema: [],
+    },
+    create: function (context) {
+      return {
+        Identifier: function (node) {
+          context.report({
+            node: node,
+            message: 'Identifiers not allowed for Super Important reasons.',
+          });
+        },
+      };
+    },
+  },
+} satisfies Record<string, Rule.RuleModule>;
+```
+
+## npm/yarn/pnpm workspaces support
+
+This plugin supports npm/yarn/pnpm workspaces, although note that if the eslint-local-rules.js file is in the workspace subdirectory, running from the project root is unsupported.
+
+For example, if there's an eslint-local-rules.js and index.js in ./src/app:
+
+Wrong: `npx eslint src/app/index.js`
+
+Right: `(cd src/app; npx eslint index.js)`
+
+Also note that if there is an eslint-local-rules.js file in *both* the workspace subdirectory and project root, the workspace one takes precedence (assuming you're running eslint from the workspace directory, as above).
+
+## Alternatives
+
+* [eslint-plugin-local](https://github.com/taskworld/eslint-plugin-local) - Allows specifying additonal plugin config such as [`processors`](https://eslint.org/docs/developer-guide/working-with-plugins#processors-in-plugins)
+* [eslint-plugin-rulesdir](https://github.com/not-an-aardvark/eslint-plugin-rulesdir) - Allows for a custom rules directory name
+
+## Context for this plugin
+
+* https://github.com/eslint/eslint/issues/2715
+* https://github.com/eslint/eslint/issues/8769
+
+## License
+
+MIT
